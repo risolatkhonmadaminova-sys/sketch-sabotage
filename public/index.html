@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <title>
+   Sketch &amp; Sabotage &mdash; Multiplayer
+  </title>
+  <link href="/style.css" rel="stylesheet"/>
+ </head>
+ <body>
+  <div class="wrap">
+   <header class="top">
+    <div class="brand">
+     ✏️ Sketch
+     <span>
+      &amp;
+     </span>
+     Sabotage
+    </div>
+    <div class="pill" id="connection">
+     ● Connecting&hellip;
+    </div>
+   </header>
+   <div class="notice hidden" id="notice">
+   </div>
+   <section class="layout" id="home">
+    <div class="panel">
+     <h1>
+      Draw it.
+      <br/>
+      <span style="color:var(--purple)">
+       Hide the truth.
+      </span>
+     </h1>
+     <p class="muted">
+      A real-time drawing party game. Invite your friends, spot the spy, and vote before they fool the room.
+     </p>
+     <label>
+      Your nickname
+     </label>
+     <input id="name" maxlength="18" placeholder="e.g. Doodle Wizard" value=""/>
+     <div class="section">
+      <h2>
+       Create a room
+      </h2>
+      <div class="row">
+       <div>
+        <label>
+         Players (10&ndash;15)
+        </label>
+        <select id="limit">
+         <option>
+          10
+         </option>
+         <option>
+          11
+         </option>
+         <option>
+          12
+         </option>
+         <option>
+          13
+         </option>
+         <option>
+          14
+         </option>
+         <option selected="">
+          15
+         </option>
+        </select>
+       </div>
+       <div>
+        <label>
+         Drawing time
+        </label>
+        <select id="duration">
+         <option value="30">
+          30 seconds
+         </option>
+         <option value="45">
+          45 seconds
+         </option>
+         <option selected="" value="60">
+          60 seconds
+         </option>
+         <option value="90">
+          90 seconds
+         </option>
+         <option value="120">
+          120 seconds
+         </option>
+        </select>
+       </div>
+      </div>
+      <label>
+       Word pack
+      </label>
+      <select id="pack">
+       <option value="mixed">
+        Mixed bag
+       </option>
+       <option value="animals">
+        Animals
+       </option>
+       <option value="food">
+        Food
+       </option>
+       <option value="objects">
+        Objects
+       </option>
+      </select>
+      <button id="create" style="width:100%;margin-top:14px">
+       Create private room &nearrow;
+      </button>
+     </div>
+    </div>
+    <div class="panel">
+     <h2>
+      Join a room
+     </h2>
+     <p class="muted">
+      Got an invite code? Enter it here, or open a friend's invite link.
+     </p>
+     <label>
+      Room code
+     </label>
+     <input id="joinCode" maxlength="6" placeholder="ABC123" style="text-transform:uppercase"/>
+     <button class="secondary" id="join" style="width:100%;margin-top:12px">
+      Join room
+     </button>
+     <div class="section">
+      <h2>
+       How to play
+      </h2>
+      <p>
+       🎨 Everyone draws a secret word at the same time.
+      </p>
+      <p>
+       🕵️ One player is the Spy and gets a different word.
+      </p>
+      <p>
+       🗳️ Review the gallery and vote to eliminate a suspect.
+      </p>
+      <p>
+       🏆 Find the Spy to win. Vote out an innocent player and the game continues.
+      </p>
+      <p class="muted" style="font-size:12px">
+       This version uses a live server: no simulated players are added.
+      </p>
+     </div>
+    </div>
+   </section>
+   <section class="hidden" id="lobby">
+    <div class="panel">
+     <div class="row">
+      <div>
+       <div class="tag">
+        ROOM CODE
+       </div>
+       <h1 id="roomCode">
+        ------
+       </h1>
+       <p class="muted">
+        Share this link with your friends.
+       </p>
+      </div>
+      <button class="secondary" id="copy">
+       Copy invite link
+      </button>
+     </div>
+     <input id="invite" readonly=""/>
+     <div class="section row">
+      <h2 style="margin:0">
+       Players in lobby
+      </h2>
+      <span class="pill" id="playerCount">
+       0 joined
+      </span>
+     </div>
+     <div class="players section" id="players">
+     </div>
+     <div class="section row">
+      <p class="muted" id="lobbyHint">
+       Waiting for players to join&hellip;
+      </p>
+      <button disabled="" id="start">
+       Start game &rarr;
+      </button>
+     </div>
+    </div>
+   </section>
+   <section class="hidden" id="game">
+    <div class="panel">
+     <div class="row">
+      <div>
+       <div class="tag" id="roundTag">
+        ROUND 1
+       </div>
+       <h2 id="phaseTitle">
+        Draw your word
+       </h2>
+      </div>
+      <div class="pill" id="timer">
+       00:60
+      </div>
+     </div>
+     <div class="role" id="role">
+      <b id="roleTitle">
+       Your secret word
+      </b>
+      <div class="muted" id="roleText">
+      </div>
+     </div>
+     <div id="drawArea">
+      <div class="canvasbox">
+       <div class="toolbar">
+        <button class="secondary" data-color="#6d55e8">
+         Purple
+        </button>
+        <button class="secondary" data-color="#ff6c9b">
+         Pink
+        </button>
+        <button class="secondary" data-color="#25ae79">
+         Green
+        </button>
+        <button class="secondary" data-color="#24213d">
+         Black
+        </button>
+        <button class="secondary" id="eraser">
+         Eraser
+        </button>
+        <button class="secondary" id="clear">
+         Clear
+        </button>
+        <label style="margin:0;display:flex;align-items:center;gap:5px">
+         Size
+         <input id="size" max="22" min="2" style="width:85px;padding:0" type="range" value="7"/>
+        </label>
+       </div>
+       <canvas height="520" id="canvas" width="900">
+       </canvas>
+      </div>
+      <button id="submitDrawing" style="width:100%;margin-top:12px">
+       Submit drawing &checkmark;
+      </button>
+     </div>
+     <div class="hidden" id="galleryArea">
+      <div class="artgrid" id="gallery">
+      </div>
+      <button id="beginVote" style="width:100%;margin-top:14px">
+       Let's vote &rarr;
+      </button>
+     </div>
+     <div class="hidden" id="voteArea">
+      <p class="muted">
+       Choose the person you think is the Spy. Votes are private.
+      </p>
+      <div class="votegrid" id="voteGrid">
+      </div>
+      <div class="row section">
+       <span class="muted" id="voteProgress">
+        Waiting for votes&hellip;
+       </span>
+       <button class="secondary" id="resolve">
+        Resolve votes
+       </button>
+      </div>
+     </div>
+     <div class="hidden" id="resultArea">
+      <div class="role" id="resultCard">
+       <h2 id="resultTitle">
+        Round result
+       </h2>
+       <p id="resultText">
+       </p>
+      </div>
+      <div class="players" id="scores">
+      </div>
+      <button id="next" style="width:100%;margin-top:15px">
+       Continue &rarr;
+      </button>
+     </div>
+    </div>
+    <div class="layout section">
+     <div class="panel">
+      <h2>
+       Players
+      </h2>
+      <div class="players" id="roster">
+      </div>
+     </div>
+     <div class="panel">
+      <h2>
+       Room chat
+      </h2>
+      <div class="chatlog" id="chatlog">
+      </div>
+      <form class="row" id="chatForm" style="margin-top:8px">
+       <input id="chatInput" maxlength="240" placeholder="Say something&hellip;"/>
+       <button>
+        Send
+       </button>
+      </form>
+     </div>
+    </div>
+   </section>
+   <footer>
+    Sketch &amp; Sabotage &middot; Multiplayer edition
+   </footer>
+  </div>
+  <script src="/socket.io/socket.io.js">
+  </script>
+  <script defer="" src="/client.js">
+  </script>
+ </body>
+</html>
+
